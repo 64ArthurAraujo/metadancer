@@ -1,5 +1,3 @@
-sudo rm -r /bin/metadancer
-
+rm -r ~/.local/bin/metadancer
 cargo build -r
-
-sudo cp -r target/release/metadancer /bin/
+cp -r target/release/metadancer ~/.local/bin/

@@ -20,12 +20,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let is_album = &args.album;
 
-    let especified_path = Path::new(args.path.as_os_str());
+    let specified_path = Path::new(args.path.as_os_str());
 
-    println!("Info: Artist is '{}'", args.artist);
+    println!("Info: Artist found - '{}'", args.artist);
 
-    if *is_album == true {
-        if especified_path.is_file() {
+    if *is_album {
+        if specified_path.is_file() {
             return Err("path is a file! (try removing the '--album' option)".into());
         }
 
@@ -33,7 +33,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let album_name = album_name.trim_end_matches('/').split('/').last().unwrap();
 
-        println!("Info: Album is '{}' (parent folder's name) \n", album_name);
+        println!(
+            "Info: Album name detected as '{}' (based on the parent folder name).",
+            album_name
+        );
 
         for song in fs::read_dir(&args.path.as_os_str())? {
             set_metadata(
@@ -43,8 +46,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
     } else {
-        if especified_path.is_dir() {
-            return Err("path is a directory! (try using the '--album' option)".into());
+        if specified_path.is_dir() {
+            return Err("The specified path is a directory. Please use the '--album' option for album directories.".into());
         }
 
         let album_name = &args
@@ -58,8 +61,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .unwrap();
 
         println!(
-            "Info: Album is: '{}' (parent folder's name)",
-            album_name.to_string()
+            "Info: Album name detected as '{}' (based on the parent folder name).",
+            album_name
         );
 
         set_metadata(args.artist, args.path.to_path_buf(), album_name.to_string());

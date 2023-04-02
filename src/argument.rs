@@ -9,10 +9,12 @@ pub struct Argument {
     #[arg(short, long)]
     pub artist: String,
 
-    /// Whether or not the program is dealing with an entire album (automatically sets the metadata album as the specified --path)
+    /// Indicates whether the program is handling a single audio file or an entire album.
+    /// If true, the program will automatically set the album metadata to the specified path.
     #[arg(short = 'A', long, default_value_t = false)]
     pub album: bool,
 
-    /// Path to the music file, if '--album' is used this path should point to a folder instead
+    /// Path to the music file.
+    /// If '--album' is used, this path should point to a folder that contains the music files.
     pub path: PathBuf,
 }

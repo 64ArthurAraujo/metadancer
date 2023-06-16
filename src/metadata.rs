@@ -1,5 +1,7 @@
-use audiotags::Tag;
-use std::path::PathBuf;
+use audiotags::{Tag, AudioTag};
+use std::{path::PathBuf, string};
+
+use crate::errs::FILE_IS_NOT_AUDIO;
 
 pub fn set_metadata(
     artist: String,
@@ -10,9 +12,7 @@ pub fn set_metadata(
     let mimetype = guess.first().unwrap().to_string();
 
     if !mimetype.starts_with("audio") {
-        return Err(
-            "The specified file is not an audio file. Please provide a valid audio file.".into(),
-        );
+        return Err(FILE_IS_NOT_AUDIO.into());
     }
 
     let mut tag = Tag::new().read_from_path(&path)?;
@@ -35,4 +35,17 @@ pub fn set_metadata(
     );
 
     Ok(())
+}
+
+pub fn get_metadata(path: PathBuf) -> Result<Box<dyn AudioTag>, String> {
+    let guess = mime_guess::from_path(path.to_str().unwrap());
+    let mimetype = guess.first().unwrap().to_string();
+
+    if !mimetype.starts_with("audio") {
+        return Err(FILE_IS_NOT_AUDIO.into());
+    }
+
+    let mut tag = Tag::new().read_from_path(&path).unwrap();
+
+    Ok(tag)
 }

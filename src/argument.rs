@@ -17,6 +17,10 @@ pub struct Argument {
     #[arg(short = 't', long, default_value = "undefined")]
     pub album_title: String,
 
+    /// Manually specify the song title (ignored if --album is used)
+    #[arg(long, default_value = "undefined")]
+    pub song_title: String,
+
     #[arg(long, default_value_t = false)]
     pub read_artist: bool,
 

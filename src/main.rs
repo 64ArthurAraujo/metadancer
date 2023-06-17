@@ -25,14 +25,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Argument::parse();
 
     let is_album = &args.album;
-
     let is_reading_artist = &args.read_artist;
     let is_reading_album = &args.read_album;
     let is_reading_title = &args.read_title;
-
     let is_doing_lookup = &args.lookup;
 
     let specified_path = Path::new(args.path.as_os_str());
+    let specified_song_title = &args.song_title;
 
     if *is_doing_lookup {
         for entry in WalkDir::new(specified_path).into_iter().filter_map(Result::ok) {
@@ -83,7 +82,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if args.album_title.eq("undefined") {
             let album_name = &args.path.to_str().unwrap();
-
             let album_name = album_name.trim_end_matches('/').split('/').last().unwrap();
 
             println!(
@@ -104,6 +102,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 args.artist.to_string(),
                 song.unwrap().path().to_path_buf(),
                 album_name.to_string(),
+                specified_song_title.to_string()
             );
         }
     } else {
@@ -143,7 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
 
-        set_metadata(args.artist, args.path.to_path_buf(), album_name.to_string());
+        set_metadata(args.artist, args.path.to_path_buf(), album_name.to_string(), specified_song_title.to_string());
     }
 
     Ok(())

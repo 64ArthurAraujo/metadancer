@@ -30,7 +30,7 @@ pub struct Argument {
     #[arg(long, default_value_t = false)]
     pub read_title: bool,
 
-    /// Looks through your system for mp3 files.
+    /// Looks through the specified path for mp3 files.
     #[arg(long, default_value_t = false)]
     pub lookup: bool,
 

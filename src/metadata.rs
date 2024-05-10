@@ -1,5 +1,5 @@
 use audiotags::{AudioTag, Tag};
-use std::{path::PathBuf, string};
+use std::path::PathBuf;
 
 use crate::errs::FILE_IS_NOT_AUDIO;
 
@@ -18,7 +18,7 @@ pub fn set_metadata(
 
     let mut tag = Tag::new().read_from_path(&path)?;
 
-    let mut song_title = "";
+    let song_title = "";
 
     if specified_song_title.eq("undefined") {
         let audio_name = &path.to_str().unwrap().split('/').last().unwrap();
@@ -52,7 +52,7 @@ pub fn get_metadata(path: PathBuf) -> Result<Box<dyn AudioTag>, String> {
         return Err(FILE_IS_NOT_AUDIO.into());
     }
 
-    let mut tag = Tag::new().read_from_path(&path).unwrap();
+    let tag = Tag::new().read_from_path(&path).unwrap();
 
     Ok(tag)
 }

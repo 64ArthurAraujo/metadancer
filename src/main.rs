@@ -1,25 +1,17 @@
-#![allow(unused)]
-
 mod argument;
-mod metadata;
 mod errs;
+mod metadata;
 
-use anyhow::{anyhow, Context, Result};
-use audiotags::{Tag, Album};
+use anyhow::Result;
 use clap::Parser;
-use errs::COULDNT_GET_USER;
-use users::get_current_username;
+use std::{fs, path::Path};
 use walkdir::WalkDir;
-use std::ffi::OsString;
-use std::os::unix::ffi::OsStringExt;
-use std::{
-    fmt::Error,
-    fs::{self, read_to_string},
-    ops::Index,
-    path::{self, Path, PathBuf},
-};
 
-use crate::{argument::Argument, metadata::{set_metadata, get_metadata}, errs::{PATH_IS_DIR, PATH_IS_FILE, ARTIST_IS_REQUIRED}};
+use crate::{
+    argument::Argument,
+    errs::{ARTIST_IS_REQUIRED, PATH_IS_DIR, PATH_IS_FILE},
+    metadata::{get_metadata, set_metadata},
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Argument::parse();
@@ -34,7 +26,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let specified_song_title = &args.song_title;
 
     if *is_doing_lookup {
-        for entry in WalkDir::new(specified_path).into_iter().filter_map(Result::ok) {
+        for entry in WalkDir::new(specified_path)
+            .into_iter()
+            .filter_map(Result::ok)
+        {
             if entry.file_type().is_file() {
                 if let Some(extension) = entry.path().extension() {
                     if extension == "mp3" {
@@ -78,7 +73,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             return Err(PATH_IS_FILE.into());
         }
 
-        let mut album_name = "";
+        let album_name = "";
 
         if args.album_title.eq("undefined") {
             let album_name = &args.path.to_str().unwrap();
@@ -98,11 +93,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         for song in fs::read_dir(&args.path.as_os_str())? {
-            set_metadata(
+            let _ = set_metadata(
                 args.artist.to_string(),
                 song.unwrap().path().to_path_buf(),
                 album_name.to_string(),
-                specified_song_title.to_string()
+                specified_song_title.to_string(),
             );
         }
     } else {
@@ -116,7 +111,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             return Err(PATH_IS_DIR.into());
         }
 
-        let mut album_name = "";
+        let album_name = "";
 
         if args.album_title.eq("undefined") {
             let album_name = &args
@@ -142,7 +137,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
 
-        set_metadata(args.artist, args.path.to_path_buf(), album_name.to_string(), specified_song_title.to_string());
+        let _ = set_metadata(
+            args.artist,
+            args.path.to_path_buf(),
+            album_name.to_string(),
+            specified_song_title.to_string(),
+        );
     }
 
     Ok(())

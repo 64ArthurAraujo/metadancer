@@ -1,4 +1,4 @@
-use audiotags::{Tag, AudioTag};
+use audiotags::{AudioTag, Tag};
 use std::{path::PathBuf, string};
 
 use crate::errs::FILE_IS_NOT_AUDIO;
@@ -19,16 +19,15 @@ pub fn set_metadata(
     let mut tag = Tag::new().read_from_path(&path)?;
 
     let mut song_title = "";
-    
+
     if specified_song_title.eq("undefined") {
         let audio_name = &path.to_str().unwrap().split('/').last().unwrap();
         let song_title = audio_name.trim_end_matches(".mp3").trim_end_matches(".mp4");
-        
+
         println!(
             "Info: Title set to '{}' (derived from audio file's name)",
             &song_title
         );
-        
     } else {
         let song_title = specified_song_title;
 
@@ -42,12 +41,6 @@ pub fn set_metadata(
     tag.set_artist(&artist);
     tag.set_album_title(&album_name);
     tag.write_to_path(&path.to_str().unwrap())?;
-
-    println!(
-        "Info: Metadata set successfully for file: {}",
-        path.display()
-    );
-
     Ok(())
 }
 
